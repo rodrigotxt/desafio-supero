@@ -13,6 +13,17 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+// apis para controlar as Tasks
+$router->group(['prefix' => 'api'], function ($router) {
+    $router->group(['prefix' => 'tasks'], function ($router) {
+        $router->get('/', 'TaskController@all');
+        $router->post('/task/{id?}', 'TaskController@update');
+        $router->get('/task/{id}', 'TaskController@show');
+    });
+
+});
+
+// retorna qualquer requisao para o Vue.js frontend
+$router->get('/{route:.*}/', function ()  {
+    return view('app');
 });
