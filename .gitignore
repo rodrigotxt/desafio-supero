@@ -1,4 +1,5 @@
 /vendor
+/public/dist
 /node_modules
 /.idea
 Homestead.json
