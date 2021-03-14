@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="dist/app.css" />
 </head>
 <body>
-    <h1>Gerenciador de Tarefas</h1>
-    <div id="app"></div>
+    <div id="app">
+        <tasks></tasks>
+    </div>
     <script src="dist/app.js"></script>
 </body>
 </html>
