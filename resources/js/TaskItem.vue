@@ -9,7 +9,7 @@
 			<button class="btn btn-sm btn-success" v-if="!task.id || (active && !isComplete)" title="Atualizar">
 				<span class="small material-icons">done</span>
 			</button>
-			<button v-if="task.id" title="Excluir" class="btn btn-sm btn-danger btn-rounded"><span class="small material-icons">delete_forever</span></button>
+			<button @click="$emit('remove', task)" v-if="task.id" title="Excluir" class="btn btn-sm btn-danger btn-rounded"><span class="small material-icons">delete_forever</span></button>
 		</span>
 	</li>
 </template>
@@ -24,6 +24,7 @@
 			}
 		},
 		methods: {
+			// enviar evento update para componente pai
 			update(){
 				this.$emit('update', task);
 			},
@@ -31,24 +32,30 @@
 			changeStatus(event){
 				let status = this.task.status;
 				if(status == 'em aberto'){
-					this.$emit('update:status', 'concluído');
+					this.$emit('update:status', {index: this.index, value:'concluído'});
 				}else{
-					this.$emit('update:status', 'em aberto');
+					this.$emit('update:status', {index: this.index, value:'em aberto'});
 				}
 			},
+			// atualizar ao perder o foco
 			onblur(event){
-				let text = event.target.innerText;
-				this.task.title = text;
 				this.active = false;
+				let text = event.target.innerText;
+				if(!text.length || text == '...'){
+					return;
+				}
+				this.task.title = text;
 				this.$emit('update:title', this.task);
 			}
 		},
 		computed: {
+			// verificar se status é concluido
 			isComplete(){
 				return this.task.status == 'concluído' ? true : false;
 			}
 		},
 		mounted(){
+			// marcar como ativa se nao tiver titulo
 			if(this.task.title == ' '){
 				this.active = true;
 			}
