@@ -35,9 +35,11 @@
 			}
 		},
 		components: {
+			// componente filho
 			taskItem: Task,
 		},
 		methods: {
+			//TODO ordenar tarefas
 			onOrderUpdate(event){
 				return;
 			},
@@ -84,6 +86,7 @@
 					console.error(error);
 				})
 			},
+			// atualiza status tarefa
 			updateStatus(event){
 				let task = this.tasksList.rows[event.index];
 				task.status = event.value;
@@ -91,6 +94,7 @@
 			},
 		},
 		mounted(){
+			// buscar tarefas no banco;
 			this.getTasks();
 		}
 	}
