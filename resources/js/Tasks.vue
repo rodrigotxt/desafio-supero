@@ -1,15 +1,23 @@
 <template>
 	<div class="container">
-		<h1 align="center">Gerenciador de Tarefas</h1>
+		<h3 align="center">Gerenciador de Tarefas</h3>
 		<ul class="list-group mx-auto tarefas">
-			<task-item v-for="(task,k) in tasksList.rows" :key="k" :task="task" @update:status="task.status = $event"></task-item>
-			<task-item :task="task"></task-item>
+			<task-item v-for="(task,index) in tasksList.rows" :index="index" :task="task"
+			@update:title="onUpdate"
+			@update:status="task.status = $event"
+			></task-item>
+			<task-item :task="task" @update:title="onUpdate"></task-item>
 		</ul>
 	</div>
 </template>
 
 <script>
+	import axios from 'axios';
+	// let token = document.head.querySelector('meta[name="csrf-token"]');
+	// instance.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+
 	import Task from './TaskItem';
+	
 	export default{
 		name: 'Tarefas',
 		data: function(){
@@ -17,18 +25,20 @@
 				task: {
 					description: '',
 					status: '',		
-					title: 'Adicionar',
+					title: ' ',
 				},
 				tasksList: {
 					rows: [
 					{
+						id: 3,
 						title: 'um titulo',
 						status: 'concluído',
 						description: 'Uma descrição',
 					},
 					{
+						id: 5,
 						title: 'um titulo 2',
-						status: 'closed',
+						status: 'em aberto',
 						description: 'Uma descrição 2',
 					}
 					],
@@ -42,11 +52,11 @@
 			getTasks(){
 				return {};
 			},
-			onUpdate(event){				
-				console.log(event)
+			onUpdate(event){
+				this.updateTask(event);
 			},
-			updateTask(){
-				axios.post('api/tasks/task/', {id: 3})
+			updateTask(task){
+				axios.post('api/tasks/task/', task)
 				.then(response =>{
 					console.log(response.data);
 				})
