@@ -17,3 +17,10 @@ O usuário deve poder:
 
 Obs.: uma task deve conter ao menos: título e status, podendo conter adicionalmente descrição, datas de
 criação, edição, remoção e conclusão.
+
+## Instalação
+• composer install
+• php artisan migrate
+• npm install
+• npm run prod
+• php artisan serve
