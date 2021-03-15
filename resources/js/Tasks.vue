@@ -1,20 +1,22 @@
 <template>
 	<div class="container">
 		<h3 align="center">Gerenciador de Tarefas</h3>
+		<ul class="list-group mx-auto tarefas" v-sortable="{ onUpdate: onOrderUpdate }">
+				<task-item v-for="(task,index) in tasksList.rows" :index="index" :task="task"
+				@update:title="onUpdate"
+				@update:status="updateStatus"
+				@remove="onRemove"
+				></task-item>
+		</ul>
 		<ul class="list-group mx-auto tarefas">
-			<task-item v-for="(task,index) in tasksList.rows" :index="index" :task="task"
-			@update:title="onUpdate"
-			@update:status="task.status = $event"
-			></task-item>
-			<task-item :task="task" @update:title="onUpdate"></task-item>
+			<task-item :task="task" @update:title="onUpdate" :index="-1"></task-item>
 		</ul>
 	</div>
 </template>
 
 <script>
 	import axios from 'axios';
-	// let token = document.head.querySelector('meta[name="csrf-token"]');
-	// instance.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+	// Vue.use(Sortable);
 
 	import Task from './TaskItem';
 	
@@ -28,48 +30,68 @@
 					title: ' ',
 				},
 				tasksList: {
-					rows: [
-					{
-						id: 3,
-						title: 'um titulo',
-						status: 'concluído',
-						description: 'Uma descrição',
-					},
-					{
-						id: 5,
-						title: 'um titulo 2',
-						status: 'em aberto',
-						description: 'Uma descrição 2',
-					}
-					],
+					rows: [],
 				}
 			}
 		},
 		components: {
-			taskItem: Task
+			taskItem: Task,
 		},
 		methods: {
-			getTasks(){
-				return {};
+			onOrderUpdate(event){
+				return;
 			},
+			// Busca Tarefas no banco
+			getTasks(){
+				let self = this;
+				axios.get('api/tasks')
+				.then(response => {
+					self.tasksList.rows = response.data;
+				})
+				.catch(error => {
+					console.log(error);
+				})
+			},
+			// remover uma tarefa
+			onRemove(task){
+				let self = this;
+				axios.delete('api/tasks/task/'+task.id)
+				.then(response => {
+					// recarregar Lista de Tarefas do Banco
+					self.getTasks();
+				})
+				.catch(error => {
+					console.log(error);
+				})
+
+			},
+			// quando atualizar
 			onUpdate(event){
 				this.updateTask(event);
 			},
+			// atualizar tarefa ou criar uma nova
 			updateTask(task){
+				let self = this;
+				let id = task.id ? task.id : false;
 				axios.post('api/tasks/task/', task)
 				.then(response =>{
-					console.log(response.data);
+					if(!id){
+						self.tasksList.rows.push(response.data);
+						self.task = {title: '...', description: '', status: ''};
+					}
 				})
 				.catch(error => {
 					console.error(error);
 				})
 			},
-			removeTask(k){
-				return false;
+			updateStatus(event){
+				let task = this.tasksList.rows[event.index];
+				task.status = event.value;
+				this.onUpdate(task);
 			},
-			updateStatus(k){
-
-			},
+		},
+		mounted(){
+			this.getTasks();
 		}
 	}
 </script>
