@@ -20,6 +20,7 @@ $router->group(['prefix' => 'api'], function ($router) {
         $router->post('/task', 'TaskController@update');
         $router->post('/task/{id?}', 'TaskController@update');
         $router->get('/task/{id}', 'TaskController@show');
+        $router->delete('/task/{id}', 'TaskController@remove');
     });
 
 });
